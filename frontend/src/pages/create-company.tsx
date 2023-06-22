@@ -16,7 +16,6 @@ const CreateCompany: FC = () => {
   const { createCompanyFields } = data;
   const [companyData, setCompanyData] = useState(INITIAL_STATE);
   const { loading, user } = useUserContext();
-
   const [errors, setErrors] = useState({});
   const { push } = useRouter();
 
@@ -48,8 +47,9 @@ const CreateCompany: FC = () => {
   const validateForm = () => {
     let isValid = true;
     for (const [key, value] of Object.entries(companyData)) {
-      // For email id
+      // For company name
       if (companyData.companyName.length < 3) {
+        isValid = false;
         setErrors((prevState) => {
           return {
             ...prevState,

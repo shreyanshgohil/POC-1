@@ -1,17 +1,30 @@
 import { Loader } from '@/components/Global';
 import { useUserContext } from '@/context/userContext';
-import { FC, useEffect, useState, ChangeEvent } from 'react';
+import { useRouter } from 'next/router';
+import { FC, useEffect, useState, ChangeEvent, FormEvent } from 'react';
+import { toast } from 'react-hot-toast';
 
 interface company {
   companyName: string;
 }
 
+const INITIAL_STATE: { reportName: string; reportType: string } = {
+  reportName: '',
+  reportType: 'Profit and Loss',
+};
+
 // For create a report
 const createReport: FC = () => {
+  // Inits
   const [companies, setCompanies] = useState([]);
-  const [errors, setErrors] = useState({});
   const [selectedCompanies, setSelectedCompanies] = useState<[]>([]);
   const { loading, user } = useUserContext();
+  const [formData, setFormData] = useState(INITIAL_STATE);
+  const { push } = useRouter();
+  const [errors, setErrors] = useState<{
+    reportName: '';
+    selectedCompanies: '';
+  }>({});
 
   // Fetching all the companies
   const fetchAllCompanyHandler = async () => {
@@ -29,23 +42,101 @@ const createReport: FC = () => {
     }
   };
 
-  // for handle the change
-  const handleUserDataChange = (
-    event: ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
-    const { name, value } = event.target;
-  };
-
+  // For select the no of companies
   const selectCompanyNameHandler = (companyId: string) => {
-    if (selectedCompanies.includes(companyId as never)) {
-      setCompanies((prevState) =>
+    setErrors((prev) => {
+      return {
+        ...prev,
+        ['selectedCompanies']: '',
+      };
+    });
+    if (selectedCompanies.includes(companyId)) {
+      setSelectedCompanies((prevState) =>
         prevState.filter((singleCompany) => singleCompany !== companyId)
       );
     } else {
-      setCompanies([...selectedCompanies, companyId] as never);
+      setSelectedCompanies([...selectedCompanies, companyId]);
     }
   };
-  console.log(selectedCompanies, 'SSSSSS');
+
+  // calls when user do some change in input field
+  const handleUserDataChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = event.target;
+    setFormData((prevState) => {
+      return {
+        ...prevState,
+        [name]: value,
+      };
+    });
+    setErrors((prevState) => {
+      return {
+        ...prevState,
+        [name]: '',
+      };
+    });
+  };
+
+  // For validate the form
+  const validateForm = () => {
+    let isValid = true;
+    // For report name
+    if (formData.reportName.length < 3) {
+      isValid = false;
+      setErrors((prevState) => {
+        return {
+          ...prevState,
+          ['reportName']: 'Please enter the valid report name',
+        };
+      });
+    }
+    if (selectedCompanies.length === 0) {
+      isValid = false;
+      setErrors((prevState) => {
+        return {
+          ...prevState,
+          ['selectedCompanies']: 'Please select at least one company',
+        };
+      });
+    }
+    return isValid;
+  };
+
+  // For handle the form submission
+  const formSubmitHandler = async (event: FormEvent) => {
+    try {
+      event.preventDefault();
+      const isValid = validateForm();
+      if (isValid) {
+        const reportBody = {
+          reportName: formData.reportName,
+          reportType: formData.reportType,
+          selectedCompanies: selectedCompanies,
+          createdBy: user._id,
+        };
+        const response = await fetch(
+          'http://localhost:5000/report/create-report',
+          {
+            credentials: 'include',
+            method: 'post',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(reportBody),
+          }
+        );
+        if (response.status === 200) {
+          toast.success('Report created successfully');
+          await push('/');
+        } else {
+          toast.error('Please enter valid details');
+        }
+      }
+    } catch (error) {
+      toast.error('Something went wrong');
+      console.log(error);
+    }
+  };
+
   // For fetch all the companies
   useEffect(() => {
     if (user) {
@@ -69,7 +160,7 @@ const createReport: FC = () => {
         <h1 className="text-3xl font-semibold text-center text-purple-700 underline uppercase decoration-wavy">
           Create report
         </h1>
-        <form className="mt-6">
+        <form className="mt-6" onSubmit={formSubmitHandler}>
           <div className="mt-6">
             <div className="mb-3">
               <label
@@ -81,10 +172,12 @@ const createReport: FC = () => {
               <input
                 id={'company-name'}
                 type={'text'}
-                name={'companyName'}
+                name={'reportName'}
                 className="block w-full px-4 py-2 mt-2 text-purple-700 bg-white border rounded-md focus:border-purple-400 focus:ring-purple-300 focus:outline-none focus:ring focus:ring-opacity-40"
                 onChange={handleUserDataChange}
+                value={formData.reportName}
               />
+              <p className="text-red-700 text-sm">{errors['reportName']}</p>
             </div>
             <div className="mb-3">
               <h3 className="mb-2 text-base font-semibold">
@@ -109,6 +202,9 @@ const createReport: FC = () => {
                   </div>
                 );
               })}
+              <p className="text-red-700 text-sm">
+                {errors['selectedCompanies']}
+              </p>
             </div>
             <div className="mb-3">
               <label
@@ -119,8 +215,9 @@ const createReport: FC = () => {
               </label>
               <select
                 id="reportType"
-                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 "
                 onChange={handleUserDataChange}
+                value={formData.reportName}
               >
                 <option
                   value={'Profit and Loss'}
