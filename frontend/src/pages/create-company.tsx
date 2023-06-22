@@ -1,35 +1,36 @@
-import { useState, FC, ChangeEvent, FormEvent, useEffect } from 'react';
-import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { DynamicInput } from '../components/DynamicForm';
-import { regex } from '../utils/regex';
-import data from '../constants/Form.json';
+import { ChangeEvent, FC, FormEvent, useState } from 'react';
 import toast from 'react-hot-toast';
+import { DynamicInput } from '../components/DynamicForm';
+import data from '../constants/Form.json';
 import { useUserContext } from '@/context/userContext';
+import { Loader } from '@/components/Global';
 
-const INITIAL_STATE: { email: string; password: string } = {
-  email: '',
-  password: '',
+const INITIAL_STATE: { companyName: string } = {
+  companyName: '',
 };
 
 // Login page
-const login: FC = () => {
+const CreateCompany: FC = () => {
   // Inits
-  const { loginFields } = data;
-  const [loginData, setLoginData] = useState(INITIAL_STATE);
+  const { createCompanyFields } = data;
+  const [companyData, setCompanyData] = useState(INITIAL_STATE);
+  const { loading, user } = useUserContext();
+
   const [errors, setErrors] = useState({});
-  const { user, fetchUserData } = useUserContext();
   const { push } = useRouter();
 
-  useEffect(() => {
-    if (user) {
-      push('/');
-    }
-  }, [user]);
+  // Loader configuration
+  if (loading) {
+    return <Loader />;
+  }
+  if (!user && !loading) {
+    return <h1>please do login</h1>;
+  }
   // calls when user do some change in input field
   const handleUserDataChange = (event: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
-    setLoginData((prevState) => {
+    setCompanyData((prevState) => {
       return {
         ...prevState,
         [name]: value,
@@ -46,31 +47,15 @@ const login: FC = () => {
   // For validate the form
   const validateForm = () => {
     let isValid = true;
-    for (const [key, value] of Object.entries(loginData)) {
+    for (const [key, value] of Object.entries(companyData)) {
       // For email id
-      if (key === 'email') {
-        isValid = regex.email.test(value);
-        if (!isValid) {
-          setErrors((prevState) => {
-            return {
-              ...prevState,
-              [key]: 'please enter the valid email id',
-            };
-          });
-        }
-      }
-
-      // For password
-      if (key === 'password') {
-        if (value.length < 6) {
-          isValid = false;
-          setErrors((prevState) => {
-            return {
-              ...prevState,
-              [key]: 'please enter the valid password',
-            };
-          });
-        }
+      if (companyData.companyName.length < 3) {
+        setErrors((prevState) => {
+          return {
+            ...prevState,
+            [key]: 'please enter the valid company Name',
+          };
+        });
       }
     }
     return isValid;
@@ -80,19 +65,25 @@ const login: FC = () => {
   const formSubmitHandler = async (event: FormEvent) => {
     try {
       event.preventDefault();
+      const companyBody = {
+        ...companyData,
+        createdBy: user._id,
+      };
       const isValid = validateForm();
       if (isValid) {
-        const response = await fetch('http://localhost:5000/user/login', {
-          credentials: 'include',
-          method: 'post',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(loginData),
-        });
+        const response = await fetch(
+          'http://localhost:5000/company/create-company',
+          {
+            credentials: 'include',
+            method: 'post',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(companyBody),
+          }
+        );
         if (response.status === 200) {
-          toast.success('Login done successfully');
-          await fetchUserData();
+          toast.success('Company created successfully');
           push('/');
         } else {
           toast.error('Please enter valid email and password');
@@ -109,11 +100,11 @@ const login: FC = () => {
     <div className="relative p-6 flex flex-col justify-center min-h-screen overflow-hidden">
       <div className="max-w-[550px] w-full p-6  m-auto bg-white rounded-md shadow-xl shadow-rose-600/40  ring-2 ring-purple-600 lg:max-w-xl">
         <h1 className="text-3xl font-semibold text-center text-purple-700 underline uppercase decoration-wavy">
-          Sign in
+          Create company
         </h1>
 
         <form className="mt-6" onSubmit={formSubmitHandler}>
-          {loginFields.map((singleFieldData, index) => {
+          {createCompanyFields.map((singleFieldData, index) => {
             return (
               <DynamicInput
                 key={index}
@@ -126,23 +117,13 @@ const login: FC = () => {
 
           <div className="mt-6">
             <button className="w-full px-4 py-2 tracking-wide text-white transition-colors duration-200 transform bg-purple-700 rounded-md hover:bg-purple-600 focus:outline-none focus:bg-purple-600">
-              Login
+              Create
             </button>
           </div>
         </form>
-
-        <p className="mt-8 text-xs font-light text-center text-gray-700 ">
-          Don't have an account?
-          <Link
-            href="/register"
-            className="font-medium text-purple-600 hover:underline ml-1"
-          >
-            Sign up
-          </Link>
-        </p>
       </div>
     </div>
   );
 };
 
-export default login;
+export default CreateCompany;

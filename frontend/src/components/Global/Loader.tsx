@@ -1,5 +1,3 @@
-
-
 // Simple loader component
 const Loader = () => {
   return (

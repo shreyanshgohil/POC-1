@@ -1,50 +1,59 @@
 {
-    "loginFields": [
-        {
-            "title": "Email",
-            "id": "email",
-            "type": "text",
-            "name": "email",
-            "defaultValue": ""
-        },
-        {
-            "title": "Password",
-            "id": "password",
-            "type": "password",
-            "name": "password",
-            "defaultValue": ""
-        }
-    ],
-    "registerFields": [
-        {
-            "title": "User name",
-            "id": "userName",
-            "type": "text",
-            "name": "userName",
-            "defaultValue": ""
-        },
-        {
-            "title": "Email",
-            "id": "email",
-            "type": "text",
-            "name": "email",
-            "defaultValue": ""
-        },
-        {
-            "title": "Password",
-            "id": "password",
-            "type": "password",
-            "name": "password",
-            "errorMessage": "Please enter valid password",
-            "defaultValue": ""
-        },
-        {
-            "title": "Contact",
-            "id": "contact",
-            "type": "number",
-            "name": "contactNo",
-            "errorMessage": "Please enter valid phone number",
-            "defaultValue": ""
-        }
-    ]
+  "loginFields": [
+    {
+      "title": "Email",
+      "id": "email",
+      "type": "text",
+      "name": "email",
+      "defaultValue": ""
+    },
+    {
+      "title": "Password",
+      "id": "password",
+      "type": "password",
+      "name": "password",
+      "defaultValue": ""
+    }
+  ],
+  "registerFields": [
+    {
+      "title": "User name",
+      "id": "userName",
+      "type": "text",
+      "name": "userName",
+      "defaultValue": ""
+    },
+    {
+      "title": "Email",
+      "id": "email",
+      "type": "text",
+      "name": "email",
+      "defaultValue": ""
+    },
+    {
+      "title": "Password",
+      "id": "password",
+      "type": "password",
+      "name": "password",
+      "errorMessage": "Please enter valid password",
+      "defaultValue": ""
+    },
+    {
+      "title": "Contact",
+      "id": "contact",
+      "type": "number",
+      "name": "contactNo",
+      "errorMessage": "Please enter valid phone number",
+      "defaultValue": ""
+    }
+  ],
+  "createCompanyFields": [
+    {
+      "title": "Company name",
+      "id": "companyName",
+      "type": "text",
+      "name": "companyName",
+      "defaultValue": ""
+    }
+  ]
 }
