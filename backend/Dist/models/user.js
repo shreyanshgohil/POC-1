@@ -28,5 +28,9 @@ const userSchema = new mongoose_1.default.Schema({
         required: true,
         unique: true,
     },
+    companies: {
+        type: [mongoose_1.default.Types.ObjectId],
+        default: [],
+    },
 }, { timestamps: true });
 exports.default = mongoose_1.default.model('User', userSchema);

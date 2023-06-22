@@ -7,6 +7,7 @@ import {
   updateUserHandler,
 } from '../controllers/user';
 import {
+  authenticateUser,
   comparePassword,
   passwordHashingHandler,
 } from '../middleware/userAuthentication';
@@ -15,7 +16,7 @@ import {
 const userRoutes = Router();
 
 // For get single user from the users collection
-userRoutes.get('/get-user', getUserHandler);
+userRoutes.get('/get-user', authenticateUser, getUserHandler);
 
 // For create a single user in user collection
 userRoutes.post('/register', passwordHashingHandler, createUserHandler);

@@ -1,3 +1,5 @@
 import userRoutes from './user';
+import companiesRoutes from './company';
+import reportRoutes from './report';
 
-export { userRoutes };
+export { userRoutes, companiesRoutes, reportRoutes };

@@ -3,6 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const connect_mongodb_session_1 = __importDefault(require("connect-mongodb-session"));
 const cookie_parser_1 = __importDefault(require("cookie-parser"));
 const cors_1 = __importDefault(require("cors"));
 const dotenv_1 = require("dotenv");
@@ -10,7 +11,6 @@ const express_1 = __importDefault(require("express"));
 const express_session_1 = __importDefault(require("express-session"));
 const mongoose_1 = __importDefault(require("mongoose"));
 const routes_1 = require("./routes");
-const connect_mongodb_session_1 = __importDefault(require("connect-mongodb-session"));
 // initialization
 (0, dotenv_1.config)();
 const app = (0, express_1.default)();
@@ -35,6 +35,8 @@ app.use((0, express_session_1.default)({
 }));
 // Routes configuration
 app.use('/user', routes_1.userRoutes);
+app.use('/report', routes_1.reportRoutes);
+app.use('/company', routes_1.companiesRoutes);
 mongoose_1.default.connect(process.env.MONGO_URL).then(() => {
     console.log('connected to db');
 });

@@ -1,3 +1,4 @@
-import User from '../models/user';
-
-export { User };
+import User from './User';
+import Company from './Company';
+import Report from './Reports';
+export { User, Company, Report };

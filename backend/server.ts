@@ -1,12 +1,11 @@
+import MongoDBSession from 'connect-mongodb-session';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import { config } from 'dotenv';
 import express from 'express';
 import session from 'express-session';
 import mongoose from 'mongoose';
-import { userRoutes } from './routes';
-import MongoDBSession from 'connect-mongodb-session';
-
+import { userRoutes, companiesRoutes, reportRoutes } from './routes';
 // initialization
 config();
 const app = express();
@@ -36,6 +35,8 @@ app.use(
 
 // Routes configuration
 app.use('/user', userRoutes);
+app.use('/report', reportRoutes);
+app.use('/company', companiesRoutes);
 
 mongoose.connect(process.env.MONGO_URL!).then(() => {
   console.log('connected to db');

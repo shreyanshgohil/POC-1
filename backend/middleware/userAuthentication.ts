@@ -1,7 +1,11 @@
 import { compare, genSalt, hash } from 'bcrypt';
 import { NextFunction, Request, Response } from 'express';
 import { User } from '../models';
-import { RequestWithLocals } from './global';
+import { RequestWithLocals } from '../types/global';
+import {
+  authenticateAccessToken,
+  authenticateRefreshToken,
+} from '../utils/utils';
 
 // For generate the hashed password
 const passwordHashingHandler = async (
@@ -29,9 +33,11 @@ const comparePassword = async (
   try {
     const { email, password } = req.body;
     if (!email || !password) {
-      return res
-        .status(403)
-        .json({ message: 'Please enter the email and password', jwt: null });
+      return res.status(403).json({
+        message: 'Please enter the email and password',
+        refreshToken: null,
+        accessToken: null,
+      });
     }
     const user = await User.findOne({ email });
     const isAuthenticated = await compare(password, user?.password!);
@@ -44,9 +50,34 @@ const comparePassword = async (
   }
 };
 
-const authenticateUser = (req: Request, res: Response, next: NextFunction) => {
+// middle ware for authenticate an user
+const authenticateUser = async (
+  req: RequestWithLocals,
+  res: Response,
+  next: NextFunction
+) => {
   try {
-    // jwt.verify()
+    const { accessToken } = req.cookies;
+    const { refreshToken } = req.session;
+    const { isAuthenticated, email } = authenticateAccessToken(accessToken);
+    if (isAuthenticated!) {
+      req.locals = { email };
+      next();
+    } else {
+      const { email, newAccessToken } = authenticateRefreshToken(refreshToken);
+      if (newAccessToken!) {
+        req.locals = { email };
+        res.cookie('accessToken', newAccessToken, {
+          httpOnly: true,
+          maxAge: 60 * 60 * 1000,
+        });
+        next();
+      } else {
+        res
+          .status(403)
+          .json({ message: 'Please do login to access the data', user: null });
+      }
+    }
   } catch (err) {
     console.log(err);
   }

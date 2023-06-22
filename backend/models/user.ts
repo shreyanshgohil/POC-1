@@ -25,6 +25,10 @@ const userSchema = new mongoose.Schema(
       required: true,
       unique: true,
     },
+    companies: {
+      type: [mongoose.Types.ObjectId],
+      default: [],
+    },
   },
   { timestamps: true }
 );
