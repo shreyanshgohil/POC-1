@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import { DynamicInput } from './DynamicInputTypes';
+import { DynamicInput } from '../../types/DynamicInputTypes';
 
 //Dynamic input for the form
 const DynamicInput: FC<DynamicInput> = (props) => {

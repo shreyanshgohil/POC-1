@@ -1,5 +1,5 @@
 import { ChangeEvent } from 'react';
-import { FormInput } from '@/Global/interfaces/InputTypes';
+import { FormInput } from '@/types/InputTypes';
 
 export interface DynamicInput {
   singleFieldData: FormInput;

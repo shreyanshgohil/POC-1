@@ -4,13 +4,15 @@ import {
   deleteReportHandler,
   getAllReportHandler,
   updateReportHandler,
+  getSingleReport,
 } from '../controllers/report';
 import { authenticateUser } from '../middleware/userAuthentication';
 const reportRoutes = Router();
 
 reportRoutes.get('/all-report', getAllReportHandler);
-reportRoutes.delete('/delete-report', deleteReportHandler);
+reportRoutes.get('/:id', getSingleReport);
+reportRoutes.delete('/delete-report', authenticateUser, deleteReportHandler);
 reportRoutes.post('/create-report', authenticateUser, createReportHandler);
-reportRoutes.put('/update-report', updateReportHandler);
+reportRoutes.put('/update-report/:id', authenticateUser, updateReportHandler);
 
 export default reportRoutes;
