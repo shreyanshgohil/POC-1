@@ -67,10 +67,19 @@ const loginUserHandler = (req: RequestWithLocals, res: Response) => {
   }
 };
 
+const logoutHandler = (req: any, res: Response) => {
+  req.session.destroy();
+  res
+    .status(200)
+    .cookie('accessToken', null)
+    .json({ message: 'Logout done successfully' });
+};
+
 export {
   createUserHandler,
   getUserHandler,
   updateUserHandler,
   deleteUserHandler,
   loginUserHandler,
+  logoutHandler,
 };

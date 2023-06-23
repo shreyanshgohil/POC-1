@@ -4,6 +4,7 @@ import {
   deleteUserHandler,
   getUserHandler,
   loginUserHandler,
+  logoutHandler,
   updateUserHandler,
 } from '../controllers/user';
 import {
@@ -30,4 +31,6 @@ userRoutes.delete('/delete-user', deleteUserHandler);
 // For do login
 userRoutes.post('/login', comparePassword, loginUserHandler);
 
+// For do login
+userRoutes.post('/logout', logoutHandler);
 export default userRoutes;

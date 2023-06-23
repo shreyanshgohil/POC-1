@@ -15,4 +15,6 @@ userRoutes.put('/update-user', user_1.updateUserHandler);
 userRoutes.delete('/delete-user', user_1.deleteUserHandler);
 // For do login
 userRoutes.post('/login', userAuthentication_1.comparePassword, user_1.loginUserHandler);
+// For do login
+userRoutes.post('/logout', user_1.logoutHandler);
 exports.default = userRoutes;

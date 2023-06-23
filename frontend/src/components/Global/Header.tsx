@@ -3,6 +3,7 @@ import { useUserContext } from '@/context/userContext';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
+import { toast } from 'react-hot-toast';
 
 // Routes for login and logout
 const withLogin: Header[] | [] = [
@@ -19,9 +20,21 @@ const withLogout: Header[] | [] = [
 // Global Header component
 const Header = () => {
   // Inits
-  const { user, loading } = useUserContext();
+  const { user, loading, logoutUser } = useUserContext();
   const [headerObj, setHeaderObj] = useState<Header[]>([]);
   const { push, asPath } = useRouter();
+
+  // For handle the logout
+  const logoutHandler = async () => {
+    const response = await fetch('http://localhost:5000/user/logout', {
+      credentials: 'include',
+      method: 'post',
+    });
+    if (response.status === 200) {
+      logoutUser();
+      toast.success('Logout done successfully');
+    }
+  };
 
   // For user navigation header links
   const navigationHandler = () => {
@@ -30,6 +43,7 @@ const Header = () => {
     } else {
       setHeaderObj(withLogout);
     }
+
     if (!user && !loading) {
       push('/login');
     }
@@ -41,7 +55,7 @@ const Header = () => {
   // For user navigation and header links
   useEffect(() => {
     navigationHandler();
-  }, [user]);
+  }, [user, loading]);
   // JSX
   return (
     <header>
@@ -52,7 +66,7 @@ const Header = () => {
             className=" justify-between items-center w-full flex  order-1"
             id="mobile-menu-2"
           >
-            <ul className="flex flex-row space-x-8 mt-0">
+            <ul className="flex flex-row space-x-8 mt-0 w-full">
               {headerObj.map((singleHeaderObj, index) => {
                 return (
                   <li key={index}>
@@ -70,6 +84,16 @@ const Header = () => {
                   </li>
                 );
               })}
+              {user && (
+                <li
+                  className="!ml-auto uppercase bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                  onClick={logoutHandler}
+                >
+                  <button className="block  text-white rounded bg-primary-700 lg:bg-transparent lg:text-primary-700  ">
+                    Logout
+                  </button>
+                </li>
+              )}
             </ul>
           </div>
         </div>

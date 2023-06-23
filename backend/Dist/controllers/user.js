@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.loginUserHandler = exports.deleteUserHandler = exports.updateUserHandler = exports.getUserHandler = exports.createUserHandler = void 0;
+exports.logoutHandler = exports.loginUserHandler = exports.deleteUserHandler = exports.updateUserHandler = exports.getUserHandler = exports.createUserHandler = void 0;
 const models_1 = require("../models");
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const utils_1 = require("../utils/utils");
@@ -71,3 +71,11 @@ const loginUserHandler = (req, res) => {
     }
 };
 exports.loginUserHandler = loginUserHandler;
+const logoutHandler = (req, res) => {
+    req.session.destroy();
+    res
+        .status(200)
+        .cookie('accessToken', null)
+        .json({ message: 'Logout done successfully' });
+};
+exports.logoutHandler = logoutHandler;

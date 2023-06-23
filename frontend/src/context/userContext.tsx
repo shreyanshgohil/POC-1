@@ -18,6 +18,7 @@ const UserContext = createContext({
   user: INITIAL_STATE,
   loading: false,
   fetchUserData: async () => {},
+  logoutUser: () => {},
 });
 
 export const useUserContext = () => useContext(UserContext);
@@ -39,6 +40,12 @@ export const UserContextProvider = ({ children }: any) => {
       console.log(error);
     }
   };
+
+  // Logout handler
+  const logoutUser = () => {
+    setUser(null);
+  };
+
   useEffect(() => {
     if (firstTimeApiCancelRef.current) {
       firstTimeApiCancelRef.current = false;
@@ -46,8 +53,9 @@ export const UserContextProvider = ({ children }: any) => {
       fetchUserData();
     }
   }, []);
+
   return (
-    <UserContext.Provider value={{ user, loading, fetchUserData }}>
+    <UserContext.Provider value={{ user, loading, fetchUserData, logoutUser }}>
       {children}
     </UserContext.Provider>
   );

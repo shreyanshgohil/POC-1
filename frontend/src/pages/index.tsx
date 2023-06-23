@@ -5,8 +5,8 @@ import { ReportTable, SearchSection } from '@/components/Home';
 import { useUserContext } from '@/context/userContext';
 import { HomePageProps } from '@/types/Home';
 import { Report } from '@/types/ReportInterface';
+import { NextApiRequest } from 'next';
 import { useRouter } from 'next/router';
-import { NextRequest, NextResponse } from 'next/server';
 import { ChangeEvent, FC, useEffect, useState } from 'react';
 import { toast } from 'react-hot-toast';
 
@@ -154,7 +154,8 @@ const index: FC<HomePageProps> = (props) => {
   );
 };
 
-export const getServerSideProps = (req: NextRequest, res: NextResponse) => {
+// Rendering the code at server side
+export const getServerSideProps = (req: NextApiRequest) => {
   return {
     props: {
       query: req.query,

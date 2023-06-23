@@ -14,6 +14,7 @@ const ReportTable: FC<ReportTable> = (props) => {
     copyTextHandler,
   } = props;
 
+  // For edit report
   const editReportHandler = (id: string) => {
     push(`/update-report/${id}`);
   };
@@ -78,12 +79,14 @@ const ReportTable: FC<ReportTable> = (props) => {
                     >
                       <SvgCopy />
                     </div>
-                    <div
-                      className="cursor-pointer"
-                      onClick={() => editReportHandler(singleReport._id)}
-                    >
-                      <SvgEdit />
-                    </div>
+                    {user && (
+                      <div
+                        className="cursor-pointer"
+                        onClick={() => editReportHandler(singleReport._id)}
+                      >
+                        <SvgEdit />
+                      </div>
+                    )}
                   </td>
                 </tr>
               );
