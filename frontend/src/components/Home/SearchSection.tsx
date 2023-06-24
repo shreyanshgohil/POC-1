@@ -1,11 +1,31 @@
 import { SearchSection } from '@/types/ReportInterface';
 import Link from 'next/link';
-import { FC } from 'react';
+import { FC, useState } from 'react';
+import { toast } from 'react-hot-toast';
 
 // Search section of home page
 const SearchSection: FC<SearchSection> = (props) => {
   // Inits
   const { search, predictiveSearchHandler } = props;
+  const [loading, setLoading] = useState(false);
+
+  const performBackupHandler = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch(
+        'https://mongodb-backup.azurewebsites.net/api/Backup'
+      );
+      if (response.status === 200) {
+        toast.success('File uploaded to the Database');
+        setLoading(false);
+      }
+    } catch (error) {
+      console.log(error);
+      setLoading(false);
+      toast.error('Something went wrong');
+    }
+  };
+
   // JSX
   return (
     <div className="search section flex items-center justify-end mr-3 gap-2">
@@ -24,6 +44,14 @@ const SearchSection: FC<SearchSection> = (props) => {
       >
         +create-report
       </Link>
+      <button
+        className={`uppercase bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded ${
+          loading ? 'pointer-events-none' : 'pointer-events-auto'
+        }`}
+        onClick={performBackupHandler}
+      >
+        {loading ? 'Loading' : 'Perform Backup'}
+      </button>
     </div>
   );
 };

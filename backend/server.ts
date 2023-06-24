@@ -40,8 +40,7 @@ app.use('/company', companiesRoutes);
 
 mongoose.connect(process.env.MONGO_URL!).then(() => {
   console.log('connected to db');
-});
-
-app.listen(process.env.PORT, () => {
-  console.log(`Server is started on port ${process.env.PORT}`);
+  app.listen(process.env.PORT, () => {
+    console.log(`Server is started on port ${process.env.PORT}`);
+  });
 });

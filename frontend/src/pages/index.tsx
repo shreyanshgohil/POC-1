@@ -121,10 +121,12 @@ const index: FC<HomePageProps> = (props) => {
     <>
       <div className="flex flex-col max-w-full">
         <div className="overflow-x-auto ">
-          <SearchSection
-            predictiveSearchHandler={predictiveSearchHandler}
-            search={search}
-          />
+          {reports.length > 0 && (
+            <SearchSection
+              predictiveSearchHandler={predictiveSearchHandler}
+              search={search}
+            />
+          )}
           <div className="inline-block min-w-full py-2 sm:px-6 lg:px-8">
             <ReportTable
               copyTextHandler={copyTextHandler}
