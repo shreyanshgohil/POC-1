@@ -21,6 +21,7 @@ const index: FC<HomePageProps> = (props) => {
   const [totalReports, setTotalReports] = useState(0);
   const [openPopup, setOpenPopup] = useState<boolean>(false);
   const [search, setSearch] = useState<string>((query.search as string) || '');
+  const [loadingRecords, setLoadingRecords] = useState(true);
   const [deleteSelectedReport, setDeleteSelectedReport] = useState<Report | {}>(
     {}
   );
@@ -28,6 +29,7 @@ const index: FC<HomePageProps> = (props) => {
   // For fetch all the reports
   const fetchAllReports = async (page: number, searchQuery: string) => {
     try {
+      setLoadingRecords(true);
       const response = await fetch(
         `http://localhost:5000/report/all-report?page=${page}&search=${searchQuery}`,
         {
@@ -37,7 +39,9 @@ const index: FC<HomePageProps> = (props) => {
       const data = await response.json();
       setTotalReports(data.totalRecords);
       setReports(data.reports);
+      setLoadingRecords(false);
     } catch (error) {
+      setLoadingRecords(false);
       console.log(error);
     }
   };
@@ -83,6 +87,10 @@ const index: FC<HomePageProps> = (props) => {
           )
         );
         togglePopupHandler();
+        if (reports.length === 1 && currentPage > 1) {
+          await fetchAllReports(currentPage - 1, search);
+          pageChangeHandler(currentPage - 1);
+        }
       }
     } catch (error) {
       console.log(error);
@@ -113,7 +121,7 @@ const index: FC<HomePageProps> = (props) => {
   }, []);
 
   // Loader configuration
-  if (loading) {
+  if (loading || loadingRecords) {
     return <Loader />;
   }
   // JSX
