@@ -15,6 +15,7 @@ const SearchSection: FC<SearchSection> = (props) => {
       const response = await fetch(
         'https://mongodb-backup.azurewebsites.net/api/Backup'
       );
+      await response.json();
       if (response.status === 200) {
         toast.success('File uploaded to the Cloud storage');
         setLoading(false);

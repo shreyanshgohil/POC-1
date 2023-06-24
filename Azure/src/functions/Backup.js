@@ -15,36 +15,26 @@ const blobServiceClient =
 const containerClient = blobServiceClient.getContainerClient(containerName);
 
 // Making the json file
-const createJsonFile = async () => {
-  return new Promise(async (resolve, reject) => {
-    const client = new MongoClient(url);
-    await client.connect();
-    const db = client.db(dbName);
-    const collection = db.collection("reports");
-    const data = await collection.find({}).toArray();
-    fs.writeFile(
-      path.join(__dirname, "..", "..", "data", "data.json"),
-      JSON.stringify(data),
-      (err) => {
-        resolve();
-        console.log(err);
-      }
-    );
-  });
+const fetchClientData = async () => {
+  const client = new MongoClient(url);
+  await client.connect();
+  const db = client.db(dbName);
+  const collection = db.collection("reports");
+  const data = await collection.find({}).toArray();
+  return data;
 };
 
 // Backup API
 app.http("Backup", {
   methods: ["GET", "POST"],
   authLevel: "anonymous",
-  handler: async (request, context) => {
-    await createJsonFile();
+  handler: async () => {
+    const reportsData = await fetchClientData();
     const blobName = `data-${Date.now()}.json`;
     const blockBlobClient = containerClient.getBlockBlobClient(blobName);
-    const filePath = path.join(__dirname, "..", "..", "data", "data.json");
-
+    
     try {
-      await blockBlobClient.uploadFile(`${filePath}`);
+      await blockBlobClient.upload(JSON.stringify(reportsData),reportsData.length);
       return {
         body: `${JSON.stringify({ message: "File uploaded successfully" })}`,
       };
